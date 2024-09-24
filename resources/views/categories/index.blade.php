@@ -1,0 +1,43 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="max-w-7xl mx-auto py-6 sm:px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-6">Liste des Catégories</h2>
+
+        <!-- Lien vers la création d'une nouvelle catégorie -->
+        <div class="mb-4 flex justify-end">
+            <a href="{{ route('categories.create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Créer une catégorie</a>
+        </div>
+
+        <!-- Tableau des catégories -->
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @foreach($categories as $category)
+                    <tr>
+                        <td class="px-6 py-4">{{ $category->name }}</td>
+                        <td class="px-6 py-4">{{ $category->description ?? 'Pas de description' }}</td>
+                        <td class="px-6 py-4">
+                            <a href="{{ route('categories.edit', $category->id) }}" class="text-indigo-600 hover:text-indigo-900">Modifier</a>
+                            <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-900 ml-2" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
+                                    Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endsection

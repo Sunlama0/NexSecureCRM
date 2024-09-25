@@ -181,7 +181,8 @@
                 <strong>{{ $invoice->company->name }}</strong>
                 <p><strong>Généré par :</strong> {{ Auth::user()->name }}</p>
                 <p>{{ $invoice->company->address }}</p>
-                <p>{{ $invoice->company->contact_phone }}</p>
+                <p>{{ $invoice->company->telephone }}</p>
+                <p>{{ $invoice->company->mail }}</p>
                 <p><strong>Siret :</strong> {{ $invoice->company->siret }}</p>
                 <p><strong>Siren :</strong> {{ $invoice->company->siren }}</p>
             </div>

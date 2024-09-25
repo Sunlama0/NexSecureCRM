@@ -174,7 +174,8 @@
                 <strong>{{ $quote->company->name }}</strong>
                 <p><strong>Généré par :</strong> {{ Auth::user()->name }}</p>
                 <p>{{ $quote->company->address }}</p>
-                <p>{{ $quote->company->contact_phone }}</p>
+                <p>{{ $invoice->company->telephone }}</p>
+                <p>{{ $invoice->company->mail }}</p>
                 <p><strong>Siret :</strong> {{ $quote->company->siret }}</p>
                 <p><strong>Siren :</strong> {{ $quote->company->siren }}</p>
             </div>

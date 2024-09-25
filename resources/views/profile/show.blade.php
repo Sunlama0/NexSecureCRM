@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md mt-4"> <!-- Ajout de mt-12 pour l'espace -->
+    <div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md mt-4">
         <!-- Titre principal -->
         <h2 class="text-3xl font-semibold text-gray-800 mb-6 flex items-center space-x-2">
             <i class="fas fa-user-circle text-indigo-600"></i>
@@ -16,9 +16,30 @@
         @endif
 
         <!-- Formulaire de modification du profil -->
-        <form action="{{ route('profile.update') }}" method="POST" class="space-y-8">
+        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+
+            <!-- Image de profil -->
+            <div class="flex items-center mb-6">
+                <div class="mr-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Image de profil</label>
+                    <div
+                        class="relative w-24 h-24 rounded-full overflow-hidden bg-gray-100 border border-gray-300 shadow-sm">
+                        <img id="profile-image-preview" src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : asset('images/nexsecure.png') }}"
+                            alt="Image de profil" class="h-full w-full object-cover">
+                    </div>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Changer l'image</label>
+                    <input type="file" name="profile_image" id="profile-image-upload" accept="image/*"
+                        class="bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none">
+                    <small class="text-gray-500 mt-2">Formats acceptés: JPEG, PNG, JPG (Max: 2MB)</small>
+                    @error('profile_image')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
 
             <!-- Section d'informations générales -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -95,14 +116,10 @@
                     </label>
                     <select id="country" name="country"
                         class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                        <option value="France" {{ old('country', $user->country) == 'France' ? 'selected' : '' }}>France
-                        </option>
-                        <option value="United States"
-                            {{ old('country', $user->country) == 'United States' ? 'selected' : '' }}>États-Unis</option>
-                        <option value="Canada" {{ old('country', $user->country) == 'Canada' ? 'selected' : '' }}>Canada
-                        </option>
-                        <option value="Germany" {{ old('country', $user->country) == 'Germany' ? 'selected' : '' }}>
-                            Allemagne</option>
+                        <option value="France" {{ old('country', $user->country) == 'France' ? 'selected' : '' }}>France</option>
+                        <option value="United States" {{ old('country', $user->country) == 'United States' ? 'selected' : '' }}>États-Unis</option>
+                        <option value="Canada" {{ old('country', $user->country) == 'Canada' ? 'selected' : '' }}>Canada</option>
+                        <option value="Germany" {{ old('country', $user->country) == 'Germany' ? 'selected' : '' }}>Allemagne</option>
                     </select>
                     @error('country')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -132,10 +149,7 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
-            </div>
 
-            <!-- Section des réseaux sociaux -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                 <div>
                     <label for="linkedin" class="block text-sm font-medium text-gray-700 flex items-center space-x-1">
                         <i class="fab fa-linkedin text-gray-500"></i>
@@ -221,4 +235,18 @@
             </div>
         </form>
     </div>
+
+    <!-- Script pour prévisualiser l'image lors de l'upload -->
+    <script>
+        document.getElementById('profile-image-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-image-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 @endsection

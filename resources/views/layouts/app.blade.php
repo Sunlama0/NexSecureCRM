@@ -26,11 +26,21 @@
             x-data="{ openSidebar: false }">
             <!-- Logo et description -->
             <div class="p-4">
-                <img src="{{ asset('images/nexsecure-logo.png') }}" alt="NexSecure Logo"
-                    class="h-12 w-auto mx-auto hidden md:block">
-                <p class="mt-2 text-center text-sm text-gray-400 hidden md:block">Protégez, développez et gérez votre IT
-                    en toute sérénité.</p>
+                <!-- Vérification si la société a un logo -->
+                @if (Auth::user()->company && Auth::user()->company->logo)
+                    <!-- Affichage du logo de la société -->
+                    <img src="{{ asset('storage/' . Auth::user()->company->logo) }}" alt="Logo de la société"
+                        class="h-12 w-auto mx-auto hidden md:block">
+                @else
+                    <!-- Logo par défaut si la société n'a pas de logo -->
+                    <img src="{{ asset('images/nexsecure-logo.png') }}" alt="NexSecure Logo"
+                        class="h-12 w-auto mx-auto hidden md:block">
+                    <p class="mt-2 text-center text-sm text-gray-400 hidden md:block">
+                        Protégez, développez et gérez votre IT en toute sérénité.
+                    </p>
+                @endif
             </div>
+
 
             <!-- Navigation principale -->
             <nav class="mt-4 flex-1 space-y-1">
@@ -77,10 +87,10 @@
                 </div>
 
                 <a href="#"
-                class="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200">
-                <i class="fas fa-chart-line w-6"></i>
-                <span class="ml-2">Reporting & Compta</span>
-            </a>
+                    class="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200">
+                    <i class="fas fa-chart-line w-6"></i>
+                    <span class="ml-2">Reporting & Compta</span>
+                </a>
 
                 <!-- Dropdown Paramétrage -->
                 <div x-data="{ open: false }">
@@ -141,8 +151,11 @@
                         <!-- Menu utilisateur -->
                         <div x-data="{ open: false }" class="relative">
                             <button @click="open = !open" class="flex items-center focus:outline-none">
-                                <img class="h-10 w-10 rounded-full" src="https://via.placeholder.com/150"
+                                <!-- Affichage de l'image de profil de l'utilisateur -->
+                                <img class="h-10 w-10 rounded-full"
+                                    src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('images/nexsecure.png') }}"
                                     alt="User Image">
+
                                 <span class="ml-3 text-gray-900 font-medium">{{ Auth::user()->name }}</span>
                                 <i class="ml-2 fas fa-chevron-down text-gray-400"></i>
                             </button>

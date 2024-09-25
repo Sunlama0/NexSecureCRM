@@ -9,27 +9,54 @@
 
                 <!-- Boutons d'action -->
                 <div class="flex space-x-4">
-                    <!-- Bouton Retour -->
-                    <a href="{{ route('quotes.index') }}"
-                        class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">
-                        Retour aux devis
-                    </a>
 
                     <!-- Bouton Modifier -->
                     <a href="{{ route('quotes.edit', $quote->id) }}"
-                        class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                        class="flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg shadow-md hover:bg-green-700 transition ease-in-out duration-200">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 17l4-4m0 0l-4-4m4 4H7"></path>
+                        </svg>
                         Modifier
                     </a>
 
                     <!-- Bouton Supprimer -->
                     <form action="{{ route('quotes.destroy', $quote->id) }}" method="POST"
-                        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce devis ?');">
+                        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette facture ?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                        <button type="submit"
+                            class="flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg shadow-md hover:bg-red-700 transition ease-in-out duration-200">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                                </path>
+                            </svg>
                             Supprimer
                         </button>
                     </form>
+
+                    <!-- Bouton Télécharger en PDF -->
+                    <a href="{{ route('quotes.downloadPDF', $quote->id) }}"
+                        class="flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow-md hover:bg-blue-700 transition ease-in-out duration-200">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Télécharger PDF
+                    </a>
+
+                    <!-- Bouton Retour -->
+                    <a href="{{ route('quotes.index') }}"
+                        class="flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg shadow-md hover:bg-gray-700 transition ease-in-out duration-200">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Retour aux devis
+                    </a>
                 </div>
             </div>
 
@@ -47,10 +74,12 @@
                 <h3 class="text-lg font-semibold">Informations sur le devis :</h3>
                 <div class="bg-gray-100 p-4 rounded-md shadow-sm">
                     <p>Date du devis : <strong>{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}</strong></p>
-                    <p>Date d'expiration : <strong>{{ \Carbon\Carbon::parse($quote->expiration_date)->format('d/m/Y') }}</strong></p>
+                    <p>Date d'expiration :
+                        <strong>{{ \Carbon\Carbon::parse($quote->expiration_date)->format('d/m/Y') }}</strong>
+                    </p>
                     <p>Objet : <span class="text-gray-600">{{ $quote->subject }}</span></p>
                     <p>Statut :
-                        @if($quote->status == 'Expiré')
+                        @if ($quote->status == 'Expiré')
                             <span class="text-red-600 font-bold">{{ $quote->status }}</span>
                         @else
                             <span class="text-green-600 font-bold">{{ $quote->status }}</span>

@@ -9,6 +9,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class QuoteController extends Controller
 {
@@ -334,5 +335,17 @@ class QuoteController extends Controller
         $quote->delete();
 
         return redirect()->route('quotes.index')->with('success', 'Devis supprimé avec succès.');
+    }
+
+    public function downloadPDF($id)
+    {
+        // Récupérer le devis par son ID
+        $quote = Quote::findOrFail($id);
+
+        // Charger la vue avec les données du devis
+        $pdf = Pdf::loadView('quotes.pdf', compact('quote'));
+
+        // Télécharger le fichier PDF
+        return $pdf->download('devis_'.$quote->quote_number.'.pdf');
     }
 }

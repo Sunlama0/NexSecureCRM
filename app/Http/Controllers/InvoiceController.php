@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\Payment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceController extends Controller
 {
@@ -264,5 +265,17 @@ class InvoiceController extends Controller
         $invoice->delete();
 
         return redirect()->route('invoices.index')->with('success', 'Facture supprimée avec succès.');
+    }
+
+    public function downloadPDF($id)
+    {
+        // Récupérer la facture avec son ID
+        $invoice = Invoice::with('company', 'client', 'items')->findOrFail($id);
+
+        // Charger la vue Blade pour la facture
+        $pdf = PDF::loadView('invoices.pdf', compact('invoice'));
+
+        // Retourner le fichier PDF avec téléchargement
+        return $pdf->download('facture-' . $invoice->invoice_number . '.pdf');
     }
 }

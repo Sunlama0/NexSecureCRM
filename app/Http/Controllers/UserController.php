@@ -10,27 +10,29 @@ use App\Models\User;
 class UserController extends Controller
 {
     /**
-     * Afficher le profil de l'utilisateur authentifié.
-     *
-     * @return \Illuminate\Http\Response
+     * Affiche la page de paramètres du profil de l'utilisateur.
      */
     public function showProfile()
     {
+        // Récupérer l'utilisateur authentifié
         $user = Auth::user();
+
+        // Retourner la vue avec les informations de l'utilisateur
         return view('profile.show', compact('user'));
     }
 
     /**
-     * Mettre à jour le profil de l'utilisateur.
+     * Met à jour les informations du profil de l'utilisateur.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function updateProfile(Request $request)
     {
+        // Récupérer l'utilisateur authentifié
         $user = Auth::user();
 
-        // Validation des champs
+        // Validation des champs du formulaire
         $validatedData = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -44,32 +46,33 @@ class UserController extends Controller
             'github' => 'nullable|string|max:255',
             'instagram' => 'nullable|string|max:255',
             'bio' => 'nullable|string',
-            'password' => 'nullable|string|min:8|confirmed',  // Validation du mot de passe avec confirmation
+            'password' => 'nullable|string|min:8|confirmed',  // Validation du mot de passe
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',  // Validation de l'image
         ]);
+
+        // Gestion de l'image de profil
+        if ($request->hasFile('profile_image')) {
+            // Supprimer l'ancienne image de profil s'il existe une image
+            if ($user->profile_image) {
+                \Storage::delete('public/' . $user->profile_image);
+            }
+
+            // Stocker la nouvelle image dans 'storage/app/public/logos'
+            $path = $request->file('profile_image')->store('logos', 'public'); // Enregistrement dans le dossier 'logos'
+            $validatedData['profile_image'] = $path;
+        }
 
         // Mise à jour des informations de l'utilisateur
-        $user->update([
-            'first_name' => $validatedData['first_name'],
-            'last_name' => $validatedData['last_name'],
-            'email' => $validatedData['email'],
-            'phone_number' => $validatedData['phone_number'],
-            'job_title' => $validatedData['job_title'],
-            'country' => $validatedData['country'],
-            'city' => $validatedData['city'],
-            'address' => $validatedData['address'],
-            'linkedin' => $validatedData['linkedin'],
-            'github' => $validatedData['github'],
-            'instagram' => $validatedData['instagram'],
-            'bio' => $validatedData['bio'],
-        ]);
+        $user->update($validatedData);
 
-        // Si le mot de passe est rempli, on le met à jour
+        // Si un nouveau mot de passe est fourni, le mettre à jour
         if ($request->filled('password')) {
             $user->update([
                 'password' => Hash::make($validatedData['password']),
             ]);
         }
 
+        // Rediriger avec un message de succès
         return redirect()->route('profile.show')->with('success', 'Profil mis à jour avec succès.');
     }
 }

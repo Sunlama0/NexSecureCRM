@@ -16,7 +16,6 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AppointmentController;
 
-
 // Route pour la page d'accueil
 Route::get('/', function () {
     return view('welcome');
@@ -105,11 +104,12 @@ Route::get('/stocks', [DeviceIdentifierController::class, 'stockOverview'])->nam
 Route::resource('clients', ClientController::class);
 
 Route::resource('quotes', QuoteController::class);
+Route::get('/quotes/{id}/download', [QuoteController::class, 'downloadPDF'])->name('quotes.downloadPDF');
 
 Route::resource('invoices', InvoiceController::class);
 Route::post('/quotes/{id}/convert-to-invoice', [QuoteController::class, 'convertToInvoice'])->name('quotes.convertToInvoice');
+Route::get('/invoices/{id}/download', [InvoiceController::class, 'downloadPDF'])->name('invoices.downloadPDF');
 
-// Route pour afficher la liste des paiements
 Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
 
 Route::get('/calendar', [AppointmentController::class, 'index'])->name('calendar.index');

@@ -33,7 +33,8 @@ class User extends Authenticatable
         'instagram',
         'bio',
         'password',
-        'company_id', // Assurez-vous que ce champ est géré correctement
+        'company_id',
+        'profile_image',
     ];
 
     /**

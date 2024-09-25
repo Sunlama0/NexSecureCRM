@@ -36,10 +36,10 @@ return [
             'throw' => false,
         ],
 
-        'images' => [
-            'driver' => 'local',
-            'root' => 'public/uploads/images',
-        ],
+        // 'images' => [
+        //     'driver' => 'local',
+        //     'root' => 'public/uploads/images',
+        // ],
 
         'public' => [
             'driver' => 'local',

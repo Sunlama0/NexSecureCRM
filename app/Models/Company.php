@@ -22,9 +22,9 @@ class Company extends Model
         'contact_name',
         'contact_email',
         'contact_phone',
-        'tva_number',    // Numéro de TVA
-        'siret',         // SIRET
-        'siren',         // SIREN
+        'tva_number',
+        'siret',
+        'siren',
         'logo',
     ];
 

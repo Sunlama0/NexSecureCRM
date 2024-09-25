@@ -13,6 +13,12 @@ class ClientController extends Controller
     // Affichage de la liste des clients appartenant à la société de l'utilisateur connecté
     public function index()
     {
+        // Vérifier que l'utilisateur est connecté et a un company_id valide
+        if (!auth()->check() || auth()->user()->company_id === null) {
+            // Rediriger vers une page d'erreur si l'utilisateur n'a pas de company_id
+            return redirect()->route('no-company');
+        }
+
         // Récupérer la société de l'utilisateur connecté
         $companyId = Auth::user()->company_id;
 

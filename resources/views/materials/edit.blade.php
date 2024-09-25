@@ -20,17 +20,16 @@
                             <label for="reference" class="block text-sm font-medium text-gray-700">Référence</label>
                             <input type="text" name="reference" id="reference"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                value="{{ $material->reference }}" required>
+                                value="{{ $material->reference }}" readonly>
                         </div>
 
                         <!-- Identifiant de l'appareil (Device Identifier) -->
                         <div class="mb-4">
-                            <label for="device_identifier_id" class="block text-sm font-medium text-gray-700">Identifiant de
-                                l'appareil</label>
+                            <label for="device_identifier_id" class="block text-sm font-medium text-gray-700">Référence produit</label>
                             <select name="device_identifier_id" id="device_identifier_id"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 required>
-                                <option value="" disabled>Choisissez un identifiant d'appareil</option>
+                                <option value="" disabled>Choisissez une référence produit</option>
                                 @foreach ($deviceIdentifiers as $deviceIdentifier)
                                     <option value="{{ $deviceIdentifier->id }}"
                                         {{ $material->device_identifier_id == $deviceIdentifier->id ? 'selected' : '' }}>

@@ -9,6 +9,12 @@ class DeviceIdentifierController extends Controller
 {
     public function index()
     {
+         // Vérifier que l'utilisateur est connecté et a un company_id valide
+        if (!auth()->check() || auth()->user()->company_id === null) {
+            // Rediriger vers une page d'erreur si l'utilisateur n'a pas de company_id
+            return redirect()->route('no-company');
+        }
+
         $deviceIdentifiers = DeviceIdentifier::where('company_id', auth()->user()->company_id)->get();
         return view('device_identifiers.index', compact('deviceIdentifiers'));
     }
@@ -55,17 +61,25 @@ class DeviceIdentifierController extends Controller
     }
 
     public function stockOverview()
-    {
-        // Récupérer le company_id de l'utilisateur connecté
-        $companyId = auth()->user()->company_id;
+{
+    // Vérifier que l'utilisateur est connecté et a un company_id valide
+    if (!auth()->check() || auth()->user()->company_id === null) {
+        // Rediriger vers une page d'erreur si l'utilisateur n'a pas de company_id
+        return redirect()->route('no-company');
+    }
 
-        // Récupérer les identifiants d'appareil et compter les matériels en stock pour cette société
-        $deviceIdentifiers = DeviceIdentifier::withCount(['materials' => function ($query) use ($companyId) {
+    // Récupérer le company_id de l'utilisateur connecté
+    $companyId = auth()->user()->company_id;
+
+    // Récupérer les identifiants d'appareil et compter les matériels en stock pour cette société
+    $deviceIdentifiers = DeviceIdentifier::where('company_id', $companyId) // Filtrer par l'entreprise de l'utilisateur
+        ->withCount(['materials' => function ($query) use ($companyId) {
             $query->where('company_id', $companyId)
                   ->where('status', 'En stock'); // Filtrer les matériels "En stock"
-        }])->get();
+        }])
+        ->get();
 
-        return view('stocks.index', compact('deviceIdentifiers'));
-    }
+    return view('stocks.index', compact('deviceIdentifiers'));
+}
 
 }

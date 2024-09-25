@@ -9,6 +9,12 @@ class SupplierController extends Controller
 {
     public function index()
     {
+        // Vérifier que l'utilisateur est connecté et a un company_id valide
+        if (!auth()->check() || auth()->user()->company_id === null) {
+            // Rediriger vers une page d'erreur si l'utilisateur n'a pas de company_id
+            return redirect()->route('no-company');
+        }
+
         $suppliers = Supplier::where('company_id', auth()->user()->company_id)->get();
         return view('suppliers.index', compact('suppliers'));
     }

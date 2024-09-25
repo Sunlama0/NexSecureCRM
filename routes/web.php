@@ -33,6 +33,10 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
 });
 
+Route::get('/no-company', function () {
+    return view('errors.no-company');
+})->name('no-company');
+
 Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {

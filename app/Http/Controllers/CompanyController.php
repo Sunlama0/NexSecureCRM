@@ -44,17 +44,23 @@ class CompanyController extends Controller
             'siret' => 'nullable|string|max:50',
             'siren' => 'nullable|string|max:50',
             'address' => 'nullable|string|max:255',
-            'logo' => 'nullable|image|max:2048', // Valider le fichier du logo
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Valider le fichier du logo
         ]);
 
-        // Mettre à jour le logo si un nouveau fichier a été soumis
+        // Si un nouveau logo est uploadé
         if ($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('logos', 'public');
-            $validatedData['logo'] = $path;
+            // Supprimer l'ancien logo s'il existe
+            if ($company->logo) {
+                \Storage::delete('public/' . $company->logo);
+            }
+
+            // Stocker le nouveau logo dans storage/app/public/logos
+            $path = $request->file('logo')->store('logos', 'public'); // Ceci enregistrera le fichier dans storage/app/public/logos
+            $validatedData['logo'] = $path; // Ajouter le chemin du logo dans les données validées
         }
 
         // Mettre à jour les informations de la société
-        $company->update($validatedData);
+        $company->update($validatedData); // Mettre à jour les champs validés
 
         // Rediriger avec un message de succès
         return redirect()->route('company.settings')->with('success', 'Les informations de la société ont été mises à jour avec succès.');
@@ -141,32 +147,38 @@ class CompanyController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-{
-    // Validation des données
-    $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'structure' => 'required|string|max:255',
-        'tva_number' => 'nullable|string|max:50',
-        'siret' => 'nullable|string|max:50',
-        'siren' => 'nullable|string|max:50',
-        'address' => 'required|string|max:255',
-        'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation pour le logo
-    ]);
+    {
+        // Validation des données
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'structure' => 'required|string|max:255',
+            'tva_number' => 'nullable|string|max:50',
+            'siret' => 'nullable|string|max:50',
+            'siren' => 'nullable|string|max:50',
+            'address' => 'required|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation pour le logo
+        ]);
 
-    // Récupérer la société
-    $company = Company::findOrFail($id);
+        // Récupérer la société
+        $company = Company::findOrFail($id);
 
-    // Mise à jour des données de la société
-    $company->update($validatedData);
+        // Gestion du logo si un fichier est uploadé
+        if ($request->hasFile('logo')) {
+            // Supprimer l'ancien logo s'il existe
+            if ($company->logo) {
+                \Storage::delete('public/' . $company->logo);
+            }
 
-    // Gestion du logo si un fichier est uploadé
-    if ($request->hasFile('logo')) {
-        $logoPath = $request->file('logo')->store('logos', 'public');
-        $company->update(['logo' => $logoPath]);
+            // Stocker le nouveau logo
+            $logoPath = $request->file('logo')->store('logos', 'public');
+            $validatedData['logo'] = $logoPath;
+        }
+
+        // Mise à jour des données de la société
+        $company->update($validatedData);
+
+        return redirect()->route('company.settings')->with('success', 'Société mise à jour avec succès.');
     }
-
-    return redirect()->route('company.settings')->with('success', 'Société mise à jour avec succès.');
-}
 
     /**
      * Supprimer une société (pour l'administration).

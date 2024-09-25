@@ -25,6 +25,7 @@ class Company extends Model
         'tva_number',    // Numéro de TVA
         'siret',         // SIRET
         'siren',         // SIREN
+        'logo',
     ];
 
     /**

@@ -49,11 +49,11 @@
                     <i class="fas fa-desktop w-6"></i>
                     <span class="ml-2">Gestion du Matériel</span>
                 </a>
-                <a href="{{ route('calendar.index') }}"
+                {{-- <a href="{{ route('calendar.index') }}"
                     class="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200">
                     <i class="fas fa-calendar-alt w-6"></i>
                     <span class="ml-2">Calendrier</span>
-                </a>
+                </a> --}}
 
                 <!-- Dropdown Facturation -->
                 <div x-data="{ open: false }">

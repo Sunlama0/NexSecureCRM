@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class EmployeeController extends Controller
 {
@@ -47,20 +49,24 @@ class EmployeeController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'position' => 'nullable|string|max:255',
+            'job_title' => 'nullable|string|max:255',
         ]);
 
         // Créer un nouvel utilisateur (employé) pour la société de l'utilisateur authentifié
-        User::create([
+        $employee = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-            'position' => $validatedData['position'],
+            'job_title' => $validatedData['job_title'],
             'company_id' => auth()->user()->company_id, // Associer l'utilisateur à la société actuelle
+            'password' => Hash::make(Str::random(10)), // Générer un mot de passe temporaire
         ]);
 
-        return redirect()->route('employees.index');    }
+        // Envoyer un email de réinitialisation de mot de passe
+        $token = Password::createToken($employee);
+        $employee->sendPasswordResetNotification($token);
+
+        return redirect()->route('employees.index')->with('success', 'Employé ajouté avec succès. Un email a été envoyé pour créer son mot de passe.');
+    }
 
     /**
      * Affiche le formulaire d'édition d'un employé.
@@ -94,21 +100,13 @@ class EmployeeController extends Controller
                 'max:255',
                 Rule::unique('users')->ignore($employee->id),
             ],
-            'password' => 'nullable|string|min:8|confirmed',
-            'position' => 'nullable|string|max:255',
+            'job_title' => 'nullable|string|max:255',
         ]);
 
         // Mettre à jour les informations de l'employé
-        $employee->name = $validatedData['name'];
-        $employee->email = $validatedData['email'];
-        if (!empty($validatedData['password'])) {
-            $employee->password = Hash::make($validatedData['password']);
-        }
-        $employee->position = $validatedData['position'];
-        $employee->save();
+        $employee->update($validatedData);
 
-        // return redirect()->route('company.settings')->with('success', 'Informations de l\'employé mises à jour.');
-        return redirect()->route('employees.index');
+        return redirect()->route('employees.index')->with('success', 'Informations de l\'employé mises à jour.');
     }
 
     /**
@@ -125,7 +123,6 @@ class EmployeeController extends Controller
         // Supprimer l'employé
         $employee->delete();
 
-        // return redirect()->route('company.settings')->with('success', 'Employé supprimé avec succès.');
-        return redirect()->route('employees.index');
+        return redirect()->route('employees.index')->with('success', 'Employé supprimé avec succès.');
     }
 }

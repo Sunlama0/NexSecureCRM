@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, Notifiable;
 
     /**
      * Les attributs qui sont massivement assignables.
@@ -55,19 +55,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    /**
-     * Définir le mot de passe de l'utilisateur.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setPasswordAttribute($value)
-    {
-        if (!empty($value)) {
-            $this->attributes['password'] = Hash::make($value);
-        }
-    }
 
     /**
      * Relation avec la société (company).

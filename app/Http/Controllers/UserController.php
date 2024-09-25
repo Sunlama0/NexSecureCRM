@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 
 class UserController extends Controller
@@ -29,7 +30,6 @@ class UserController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        // Récupérer l'utilisateur authentifié
         $user = Auth::user();
 
         // Validation des champs du formulaire
@@ -46,33 +46,32 @@ class UserController extends Controller
             'github' => 'nullable|string|max:255',
             'instagram' => 'nullable|string|max:255',
             'bio' => 'nullable|string',
-            'password' => 'nullable|string|min:8|confirmed',  // Validation du mot de passe
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',  // Validation de l'image
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // Validation du mot de passe si fourni
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
         // Gestion de l'image de profil
         if ($request->hasFile('profile_image')) {
-            // Supprimer l'ancienne image de profil s'il existe une image
             if ($user->profile_image) {
                 \Storage::delete('public/' . $user->profile_image);
             }
-
-            // Stocker la nouvelle image dans 'storage/app/public/logos'
-            $path = $request->file('profile_image')->store('logos', 'public'); // Enregistrement dans le dossier 'logos'
+            $path = $request->file('profile_image')->store('logos', 'public');
             $validatedData['profile_image'] = $path;
         }
 
-        // Mise à jour des informations de l'utilisateur
+        // Mise à jour des informations utilisateur
         $user->update($validatedData);
 
-        // Si un nouveau mot de passe est fourni, le mettre à jour
+        // Mise à jour du mot de passe uniquement si un nouveau mot de passe est fourni
         if ($request->filled('password')) {
-            $user->update([
-                'password' => Hash::make($validatedData['password']),
-            ]);
+            $user->password = Hash::make($validatedData['password']);
+            $user->save();
         }
 
-        // Rediriger avec un message de succès
+        Log::info('Mot de passe mis à jour pour l\'utilisateur : ' . $user->id);
+
         return redirect()->route('profile.show')->with('success', 'Profil mis à jour avec succès.');
     }
+
 }

@@ -26,6 +26,9 @@ class Company extends Model
         'siret',
         'siren',
         'logo',
+        'telephone',
+        'mail',
+        'website',
     ];
 
     /**

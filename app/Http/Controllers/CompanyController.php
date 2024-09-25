@@ -44,6 +44,9 @@ class CompanyController extends Controller
             'siret' => 'nullable|string|max:50',
             'siren' => 'nullable|string|max:50',
             'address' => 'nullable|string|max:255',
+            'telephone' => 'nullable|string|max:255',
+            'mail' => 'nullable|string|max:255',
+            'website' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Valider le fichier du logo
         ]);
 
@@ -156,6 +159,9 @@ class CompanyController extends Controller
             'siret' => 'nullable|string|max:50',
             'siren' => 'nullable|string|max:50',
             'address' => 'required|string|max:255',
+            'telephone' => 'nullable|string|max:255',
+            'mail' => 'nullable|string|max:255',
+            'website' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation pour le logo
         ]);
 
